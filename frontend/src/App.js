@@ -1,15 +1,21 @@
 import {RouterProvider, createBrowserRouter} from "react-router-dom";
 import HomePage from "./pages/Home";
-import EventsPage from "./pages/Events";
-import EventsDetailPage from "./pages/EventsDetail";
-import NewEventsPage from "./pages/NewEvents";
+import EventsPage, {loader as eventLoader} from "./pages/Events";
+import EventsDetailPage, {
+  loader as detailLoader,
+  action as deleteEventAction,
+} from "./pages/EventsDetail";
+import NewEventsPage, {action as newEventAction} from "./pages/NewEvents";
 import EditEventsPage from "./pages/EditEvents";
 import Root from "./pages/Root";
 import EventsRoot from "./pages/EventsRoot";
+import ErrorPage from "./pages/Error";
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <ErrorPage />,
     children: [
       {index: true, element: <HomePage />},
       {
@@ -19,25 +25,28 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <EventsPage />,
-            loader: async () => {
-              const response = await fetch("http://localhost:8080/events");
-
-              if (!response.ok) {
-                //...
-              } else {
-                const resData = await response.json();
-                return resData.events;
-              }
-            },
+            loader: eventLoader,
           },
-          {path: ":eventId", element: <EventsDetailPage />},
+          {
+            path: ":eventId",
+            id: "event-detail",
+            loader: detailLoader,
+            children: [
+              {
+                index: true,
+                element: <EventsDetailPage />,
+                action: deleteEventAction,
+              },
+              {
+                path: "edit",
+                element: <EditEventsPage />,
+              },
+            ],
+          },
           {
             path: "new",
             element: <NewEventsPage />,
-          },
-          {
-            path: ":eventId/edit",
-            element: <EditEventsPage />,
+            action: newEventAction,
           },
         ],
       },
