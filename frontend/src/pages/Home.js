@@ -1,7 +1,12 @@
 import React from "react";
+import PageContent from "../components/PageContent";
 
 const HomePage = () => {
-  return <div>Home</div>;
+  return (
+    <PageContent title="Welcome">
+      <p>Browse all Events!</p>
+    </PageContent>
+  );
 };
 
 export default HomePage;
