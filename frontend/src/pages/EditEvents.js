@@ -7,7 +7,7 @@ const EditEventsPage = () => {
 
   const event = data.event;
 
-  return <EventForm data={event} />;
+  return <EventForm method="patch" data={event} />;
 };
 
 export default EditEventsPage;
